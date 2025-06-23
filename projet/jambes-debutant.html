@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jambes - Niveau Débutant - MS-Fitness</title>
+  <link rel="icon" href="favicon.ico.png" type="image/x-icon" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #fff;
+      color: #222;
+      margin: 0; padding: 0;
+    }
+    header, footer {
+      background-color: #b22222;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .subtitle {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    main {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+    h1, h2 {
+      color: #b22222;
+    }
+    #exercice-nom {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    #exercice-description {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      line-height: 1.5;
+      text-align: justify;
+    }
+    #compteur {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #b22222;
+      font-weight: bold;
+      user-select: none;
+    }
+    button {
+      background-color: #b22222;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 12px 25px;
+      font-weight: bold;
+      font-size: 1rem;
+      margin: 5px 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #7a0d0d;
+    }
+    .button-group {
+      margin-bottom: 30px;
+    }
+    .rep-buttons {
+      margin: 15px 0;
+    }
+    .rep-buttons button {
+      width: 50px;
+      padding: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">MS-Fitness</div>
+    <div class="subtitle">Catégorie : Jambes | Niveau : Débutant</div>
+  </header>
+  <main>
+    <h2>Exercice <span id="compteur-exercice">1 / 10</span></h2>
+    <div id="exercice-nom"></div>
+    <div id="exercice-description"></div>
+    <div id="compteur">30 répétitions</div>
+    <div class="button-group" id="timer-buttons" style="display:none;">
+      <button id="pause-btn">Commencer</button>
+      <button id="reset-btn">Recommencer</button>
+    </div>
+    <div class="rep-buttons" id="rep-buttons">
+      <button id="rep-minus">-</button>
+      <span id="rep-count" style="font-size:2rem; margin: 0 20px;">30</span>
+      <button id="rep-plus">+</button>
+    </div>
+    <div class="button-group">
+      <button id="prev-btn">Précédent</button>
+      <button id="next-btn">Suivant</button>
+    </div>
+    <button id="sortie-btn">Sortie</button>
+  </main>
+  <footer>
+    <p>&copy; 2025 MS-Fitness par MBALA MALAMBU JONATHAN. Tous droits réservés.</p>
+  </footer>
+  <script>
+    const exercices = [
+      { nom: "Squats", description: "Tenez-vous debout, pieds écartés à la largeur des épaules. Fléchissez les genoux et descendez les fessiers comme si vous vouliez vous asseoir sur une chaise. Gardez le dos droit et les abdominaux engagés. Remontez en poussant sur vos talons.", type: "serie" },
+      { nom: "Fentes statiques", description: "Placez un pied devant l’autre, genoux légèrement fléchis. Descendez lentement le genou arrière vers le sol sans le toucher, en gardant le buste droit. Remontez et maintenez la position avant de changer de jambe.", type: "serie" },
+      { nom: "Talons-fesses", description: "En position debout, courez sur place en ramenant alternativement vos talons vers vos fessiers. Gardez un rythme modéré, et balancez les bras naturellement.", type: "serie" },
+      { nom: "Montées genoux", description: "En position debout, montez un genou à la hauteur de la taille puis alternez rapidement avec l’autre genou. Gardez le dos droit et engagez vos abdominaux.", type: "serie" },
+      { nom: "Pont fessier", description: "Allongez-vous sur le dos, genoux pliés et pieds à plat au sol. Contractez vos fessiers et soulevez votre bassin vers le plafond, formez une ligne droite des épaules aux genoux. Redescendez doucement.", type: "serie" },
+      { nom: "Step-ups", description: "Placez un pied sur une marche ou un banc solide. Montez en poussant avec la jambe posée sur la marche, puis redescendez doucement. Alternez les jambes à chaque répétition.", type: "serie" },
+      { nom: "Étirements quadriceps", description: "Debout, attrapez votre pied droit avec la main droite derrière vous pour étirer l’avant de la cuisse. Gardez les genoux alignés et maintenez la position 20 secondes. Changez de côté.", type: "serie" },
+      { nom: "Flexion latérale", description: "Debout, pieds écartés à la largeur des épaules, penchez-vous lentement sur un côté en glissant la main le long de la cuisse. Revenez au centre et penchez-vous de l’autre côté.", type: "serie" },
+      { nom: "Marche sur place", description: "Marchez sur place en levant légèrement les genoux, bras libres et balancés naturellement. Gardez un rythme modéré et le dos droit.", type: "serie" },
+      { nom: "Étirement total", description: "Debout, étirez vos bras au-dessus de la tête en vous allongeant vers le plafond, puis penchez-vous doucement vers l’avant pour étirer tout le corps. Maintenez la position 20 secondes.", type: "serie" }
+    ];
+
+    let currentIndex = 0;
+    let repCount = 30;
+
+    const nomElement = document.getElementById('exercice-nom');
+    const descElement = document.getElementById('exercice-description');
+    const compteurExercice = document.getElementById('compteur-exercice');
+    const compteur = document.getElementById('compteur');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const sortieBtn = document.getElementById('sortie-btn');
+    const timerButtonsDiv = document.getElementById('timer-buttons');
+    const repButtonsDiv = document.getElementById('rep-buttons');
+    const repMinusBtn = document.getElementById('rep-minus');
+    const repPlusBtn = document.getElementById('rep-plus');
+    const repCountSpan = document.getElementById('rep-count');
+
+    function updateRepDisplay() {
+      compteur.textContent = `${repCount} répétitions`;
+      repCountSpan.textContent = repCount;
+    }
+
+    function updateExercice() {
+      const ex = exercices[currentIndex];
+      nomElement.textContent = ex.nom;
+      descElement.textContent = ex.description;
+      compteurExercice.textContent = `${currentIndex + 1} / ${exercices.length}`;
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === exercices.length - 1;
+
+      if (ex.type === "serie") {
+        repButtonsDiv.style.display = 'block';
+        timerButtonsDiv.style.display = 'none';
+        updateRepDisplay();
+      } else {
+        repButtonsDiv.style.display = 'none';
+        timerButtonsDiv.style.display = 'block';
+      }
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        repCount = 30;
+        updateExercice();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < exercices.length - 1) {
+        currentIndex++;
+        repCount = 30;
+        updateExercice();
+      }
+    });
+
+    sortieBtn.addEventListener('click', () => {
+      window.location.href = 'jambes.html';
+    });
+
+    repMinusBtn.addEventListener('click', () => {
+      if (repCount > 0) {
+        repCount--;
+        updateRepDisplay();
+      }
+    });
+
+    repPlusBtn.addEventListener('click', () => {
+      repCount++;
+      updateRepDisplay();
+    });
+
+    updateExercice();
+  </script>
+</body>
+</html>

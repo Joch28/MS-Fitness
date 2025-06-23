@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bas du Corps - Niveau Débutant - MS-Fitness</title>
+  <link rel="icon" href="favicon.ico.png" type="image/x-icon" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #fff;
+      color: #222;
+      margin: 0; padding: 0;
+    }
+    header, footer {
+      background-color: #b22222;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .subtitle {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    main {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+    h2 {
+      color: #b22222;
+    }
+    #exercice-nom {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    #exercice-description {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+    #compteur {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #b22222;
+      font-weight: bold;
+      user-select: none;
+    }
+    button {
+      background-color: #b22222;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 12px 25px;
+      font-weight: bold;
+      font-size: 1rem;
+      margin: 5px 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #7a0d0d;
+    }
+    .button-group {
+      margin-bottom: 30px;
+    }
+    .rep-buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 15px 0;
+    }
+    .rep-buttons button {
+      width: 50px;
+      padding: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    #rep-count {
+      font-size: 2rem;
+      margin: 0 20px;
+      display: inline-block;
+      width: 60px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">MS-Fitness</div>
+    <div class="subtitle">Catégorie : Bas du Corps | Niveau : Débutant</div>
+  </header>
+  <main>
+    <h2>Exercice <span id="compteur-exercice">1 / 10</span></h2>
+    <div id="exercice-nom"></div>
+    <div id="exercice-description"></div>
+    <div id="compteur">30 répétitions</div>
+    <div class="button-group" id="timer-buttons" style="display:none;">
+      <button id="pause-btn">Commencer</button>
+      <button id="reset-btn">Recommencer</button>
+    </div>
+    <div class="rep-buttons" id="rep-buttons">
+      <button id="rep-minus">-</button>
+      <span id="rep-count">30</span>
+      <button id="rep-plus">+</button>
+    </div>
+    <div class="button-group">
+      <button id="prev-btn">Précédent</button>
+      <button id="next-btn">Suivant</button>
+    </div>
+    <button id="sortie-btn">Sortie</button>
+  </main>
+  <footer>
+    <p>&copy; 2025 MS-Fitness par MBALA MALAMBU JONATHAN. Tous droits réservés.</p>
+  </footer>
+  <script>
+    const exercices = [
+      { nom: "Squats", description: "Debout, pieds écartés à la largeur des épaules, descends en pliant les genoux comme pour t'asseoir, puis remonte.", type: "serie" },
+      { nom: "Fentes statiques", description: "En position debout, avance une jambe et plie les deux genoux à 90°, puis remonte et change de jambe.", type: "serie" },
+      { nom: "Montées de genoux", description: "En position debout, lève un genou vers la poitrine, alterne rapidement avec l’autre.", type: "serie" },
+      { nom: "Talons-fesses", description: "En marchant ou en courant sur place, ramène alternativement les talons vers les fessiers.", type: "serie" },
+      { nom: "Pont fessier", description: "Allongé sur le dos, jambes pliées, pousse les hanches vers le haut en contractant les fessiers.", type: "serie" },
+      { nom: "Step-ups", description: "Monte un pied sur une marche ou un support, puis l’autre, redescends et recommence.", type: "serie" },
+      { nom: "Squats sumo", description: "Pieds plus écartés que les épaules, pointe des pieds vers l’extérieur, descends puis remonte.", type: "serie" },
+      { nom: "Étirement quadriceps", description: "Debout, attrape un pied derrière toi et tire doucement pour étirer l’avant de la cuisse.", type: "serie" },
+      { nom: "Flexion latérale", description: "Debout, bras le long du corps, incline le buste latéralement d’un côté puis de l’autre.", type: "serie" },
+      { nom: "Étirement total", description: "Allonge-toi ou reste debout, étire tout le corps en levant les bras et en t’étirant bien.", type: "serie" }
+    ];
+
+    let currentIndex = 0;
+    let repCount = 30;
+
+    const nomElement = document.getElementById('exercice-nom');
+    const descElement = document.getElementById('exercice-description');
+    const compteurExercice = document.getElementById('compteur-exercice');
+    const compteur = document.getElementById('compteur');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const sortieBtn = document.getElementById('sortie-btn');
+    const timerButtonsDiv = document.getElementById('timer-buttons');
+    const repButtonsDiv = document.getElementById('rep-buttons');
+    const repMinusBtn = document.getElementById('rep-minus');
+    const repPlusBtn = document.getElementById('rep-plus');
+    const repCountSpan = document.getElementById('rep-count');
+
+    function updateRepDisplay() {
+      compteur.textContent = `${repCount} répétitions`;
+      repCountSpan.textContent = repCount;
+    }
+
+    function resetReps() {
+      repCount = 30;
+      updateRepDisplay();
+    }
+
+    function updateExercice() {
+      const ex = exercices[currentIndex];
+      nomElement.textContent = ex.nom;
+      descElement.textContent = ex.description;
+      compteurExercice.textContent = `${currentIndex + 1} / ${exercices.length}`;
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === exercices.length - 1;
+
+      timerButtonsDiv.style.display = 'none';
+      repButtonsDiv.style.display = 'flex';
+      resetReps();
+    }
+
+    prevBtn.addEventListener('click', () => { 
+      if (currentIndex > 0) { 
+        currentIndex--; 
+        updateExercice(); 
+      } 
+    });
+
+    nextBtn.addEventListener('click', () => { 
+      if (currentIndex < exercices.length - 1) { 
+        currentIndex++; 
+        updateExercice(); 
+      } 
+    });
+
+    sortieBtn.addEventListener('click', () => { 
+      window.location.href = 'bas-du-corps.html'; 
+    });
+
+    repMinusBtn.addEventListener('click', () => { 
+      if (repCount > 0) { 
+        repCount--; 
+        updateRepDisplay(); 
+      } 
+    });
+
+    repPlusBtn.addEventListener('click', () => { 
+      repCount++; 
+      updateRepDisplay(); 
+    });
+
+    updateExercice();
+  </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Abdos - Niveau Débutant - MS-Fitness</title>
+  <link rel="icon" href="favicon.ico.png" type="image/x-icon" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #fff;
+      color: #222;
+      margin: 0; padding: 0;
+    }
+    header, footer {
+      background-color: #b22222;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .subtitle {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    main {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+    h1, h2 {
+      color: #b22222;
+    }
+    #exercice-nom {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    #exercice-description {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+    #compteur {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #b22222;
+      font-weight: bold;
+      user-select: none;
+    }
+    button {
+      background-color: #b22222;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 12px 25px;
+      font-weight: bold;
+      font-size: 1rem;
+      margin: 5px 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #7a0d0d;
+    }
+    .button-group {
+      margin-bottom: 30px;
+    }
+    .rep-buttons {
+      margin: 15px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+    .rep-buttons button {
+      width: 50px;
+      padding: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">MS-Fitness</div>
+    <div class="subtitle">Catégorie : Abdos | Niveau : Débutant</div>
+  </header>
+  <main>
+    <h2>Exercice <span id="compteur-exercice">1 / 10</span></h2>
+    <div id="exercice-nom"></div>
+    <div id="exercice-description"></div>
+    <div id="compteur">20 répétitions</div>
+    <div class="button-group" id="timer-buttons" style="display:none;">
+      <button id="pause-btn">Commencer</button>
+      <button id="reset-btn">Recommencer</button>
+    </div>
+    <div class="rep-buttons" id="rep-buttons">
+      <button id="rep-minus">-</button>
+      <span id="rep-count" style="font-size:2rem;">20</span>
+      <button id="rep-plus">+</button>
+    </div>
+    <div class="button-group">
+      <button id="prev-btn">Précédent</button>
+      <button id="next-btn">Suivant</button>
+    </div>
+    <button id="sortie-btn">Sortie</button>
+  </main>
+  <footer>
+    <p>&copy; 2025 MS-Fitness par MBALA MALAMBU JONATHAN. Tous droits réservés.</p>
+  </footer>
+  <script>
+    const exercices = [
+      { nom: "Crunchs basiques", description: "Effectue des crunchs classiques en contractant bien les abdominaux, sans tirer sur la nuque.", type: "serie" },
+      { nom: "Planche sur les genoux", description: "Maintiens une position de planche avec les genoux au sol pour renforcer progressivement les abdominaux.", type: "serie" },
+      { nom: "Levers de jambes", description: "Allongé sur le dos, lève lentement les jambes tendues jusqu’à la verticale puis redescends sans toucher le sol.", type: "serie" },
+      { nom: "Relevés de buste", description: "Depuis une position allongée, relève le buste en contractant les abdos, puis redescends lentement.", type: "serie" },
+      { nom: "Planche avant simple", description: "Tiens la position de planche avant classique en gardant le corps bien droit et les abdominaux gainés.", type: "serie" },
+      { nom: "Étirement du dos", description: "Assieds-toi à genoux, penche-toi doucement en avant pour étirer le dos et relâcher les tensions.", type: "serie" },
+      { nom: "Rotation du tronc", description: "Assis, tourne lentement le tronc de gauche à droite en gardant les abdos contractés.", type: "serie" },
+      { nom: "Respiration abdominale", description: "Inspire profondément en gonflant le ventre, puis expire lentement en rentrant le ventre pour mobiliser le diaphragme.", type: "serie" },
+      { nom: "Gainage statique", description: "Tiens une position gainage statique en contractant bien les muscles abdominaux.", type: "serie" },
+      { nom: "Flexions latérales", description: "Debout, penche le buste latéralement pour étirer et renforcer les muscles obliques.", type: "serie" }
+    ];
+
+    let currentIndex = 0;
+    let repCount = 20;
+
+    const nomElement = document.getElementById('exercice-nom');
+    const descElement = document.getElementById('exercice-description');
+    const compteurExercice = document.getElementById('compteur-exercice');
+    const compteur = document.getElementById('compteur');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const sortieBtn = document.getElementById('sortie-btn');
+    const timerButtonsDiv = document.getElementById('timer-buttons');
+    const repButtonsDiv = document.getElementById('rep-buttons');
+    const repMinusBtn = document.getElementById('rep-minus');
+    const repPlusBtn = document.getElementById('rep-plus');
+    const repCountSpan = document.getElementById('rep-count');
+
+    function updateRepDisplay() {
+      compteur.textContent = `${repCount} répétitions`;
+      repCountSpan.textContent = repCount;
+    }
+
+    function resetReps() {
+      repCount = 20;
+      updateRepDisplay();
+    }
+
+    function updateExercice() {
+      const ex = exercices[currentIndex];
+      nomElement.textContent = ex.nom;
+      descElement.textContent = ex.description;
+      compteurExercice.textContent = `${currentIndex + 1} / ${exercices.length}`;
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === exercices.length - 1;
+
+      timerButtonsDiv.style.display = 'none';
+      repButtonsDiv.style.display = 'flex';
+      resetReps();
+    }
+
+    repMinusBtn.addEventListener('click', () => {
+      if (repCount > 1) {
+        repCount--;
+        updateRepDisplay();
+      }
+    });
+
+    repPlusBtn.addEventListener('click', () => {
+      if (repCount < 50) {
+        repCount++;
+        updateRepDisplay();
+      }
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateExercice();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < exercices.length - 1) {
+        currentIndex++;
+        updateExercice();
+      }
+    });
+
+    sortieBtn.addEventListener('click', () => {
+      window.location.href = 'abdos.html'; // Retour à la page principale abdos
+    });
+
+    updateExercice();
+  </script>
+</body>
+</html>

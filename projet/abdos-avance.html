@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Abdos - Niveau Avancé - MS-Fitness</title>
+  <link rel="icon" href="favicon.ico.png" type="image/x-icon" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #fff;
+      color: #222;
+      margin: 0; padding: 0;
+    }
+    header, footer {
+      background-color: #b22222;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .subtitle {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    main {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+    h2 {
+      color: #b22222;
+    }
+    #exercice-nom {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    #exercice-description {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+    #compteur {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #b22222;
+      font-weight: bold;
+      user-select: none;
+    }
+    button {
+      background-color: #b22222;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 12px 25px;
+      font-weight: bold;
+      font-size: 1rem;
+      margin: 5px 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #7a0d0d;
+    }
+    .button-group {
+      margin-bottom: 30px;
+    }
+    .rep-buttons {
+      margin: 15px 0;
+    }
+    .rep-buttons button {
+      width: 50px;
+      padding: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">MS-Fitness</div>
+    <div class="subtitle">Catégorie : Abdos | Niveau : Avancé</div>
+  </header>
+  <main>
+    <h2>Exercice <span id="compteur-exercice">1 / 10</span></h2>
+    <div id="exercice-nom"></div>
+    <div id="exercice-description"></div>
+    <div id="compteur">30 répétitions</div>
+    <div class="button-group" id="timer-buttons" style="display:none;">
+      <button id="pause-btn">Commencer</button>
+      <button id="reset-btn">Recommencer</button>
+    </div>
+    <div class="rep-buttons" id="rep-buttons">
+      <button id="rep-minus">-</button>
+      <span id="rep-count" style="font-size:2rem; margin: 0 20px; display:inline-block; width:60px;">30</span>
+      <button id="rep-plus">+</button>
+    </div>
+    <div class="button-group">
+      <button id="prev-btn">Précédent</button>
+      <button id="next-btn">Suivant</button>
+    </div>
+    <button id="sortie-btn">Sortie</button>
+  </main>
+  <footer>
+    <p>&copy; 2025 MS-Fitness par MBALA MALAMBU JONATHAN. Tous droits réservés.</p>
+  </footer>
+  <script>
+    const exercices = [
+      { nom: "Planche dynamique avancée", description: "Enchaîne montée et descente rapide entre planche haute et basse avec stabilité.", type: "chrono" },
+      { nom: "Crunchs lestés", description: "Utilise un poids sur la poitrine ou derrière la tête pour intensifier les crunchs.", type: "serie" },
+      { nom: "Levers de jambes suspendus", description: "Suspends-toi à une barre et lève les jambes tendues à l’horizontale.", type: "serie" },
+      { nom: "Planche spiderman", description: "En position planche, ramène un genou vers le coude du même côté, en alternant.", type: "chrono" },
+      { nom: "Crunchs pieds levés", description: "Allongé sur le dos avec les jambes levées, effectue des crunchs vers tes pieds.", type: "serie" },
+      { nom: "Gainage avec poids", description: "Ajoute un poids sur le dos en position planche classique.", type: "chrono" },
+      { nom: "Relevés de buste rapides", description: "Effectue des relevés de buste en cadence rapide, sans élan.", type: "serie" },
+      { nom: "Crunchs pliométriques", description: "Ajoute un petit saut au sommet du crunch pour une intensité explosive.", type: "serie" },
+      { nom: "Planche sautée", description: "Depuis la planche, saute pieds joints vers l’extérieur puis reviens au centre.", type: "chrono" },
+      { nom: "Russian twists lestés", description: "Réalise les torsions avec un poids dans les mains pour plus de résistance.", type: "serie" }
+    ];
+
+    let currentIndex = 0;
+    let secondsRemaining = 50;
+    let timerInterval = null;
+    let paused = true;
+    let repCount = 30;
+
+    const nomElement = document.getElementById('exercice-nom');
+    const descElement = document.getElementById('exercice-description');
+    const compteurExercice = document.getElementById('compteur-exercice');
+    const compteur = document.getElementById('compteur');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const sortieBtn = document.getElementById('sortie-btn');
+    const timerButtonsDiv = document.getElementById('timer-buttons');
+    const repButtonsDiv = document.getElementById('rep-buttons');
+    const repMinusBtn = document.getElementById('rep-minus');
+    const repPlusBtn = document.getElementById('rep-plus');
+    const repCountSpan = document.getElementById('rep-count');
+
+    function formatTime(s) {
+      const min = Math.floor(s / 60).toString().padStart(2, '0');
+      const sec = (s % 60).toString().padStart(2, '0');
+      return `${min}:${sec}`;
+    }
+
+    function updateTimerDisplay() {
+      compteur.textContent = formatTime(secondsRemaining);
+    }
+
+    function updateRepDisplay() {
+      compteur.textContent = `${repCount} répétitions`;
+    }
+
+    function resetTimer() {
+      secondsRemaining = 50;
+      paused = true;
+      pauseBtn.textContent = 'Commencer';
+      clearInterval(timerInterval);
+      updateTimerDisplay();
+    }
+
+    function resetReps() {
+      repCount = 30;
+      updateRepDisplay();
+    }
+
+    function startTimer() {
+      if (!paused) return;
+      paused = false;
+      pauseBtn.textContent = 'Pause';
+      timerInterval = setInterval(() => {
+        if (secondsRemaining > 0) {
+          secondsRemaining--;
+          updateTimerDisplay();
+        } else {
+          clearInterval(timerInterval);
+          paused = true;
+          pauseBtn.textContent = 'Commencer';
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      paused = true;
+      pauseBtn.textContent = 'Commencer';
+      clearInterval(timerInterval);
+    }
+
+    function updateExercice() {
+      const ex = exercices[currentIndex];
+      nomElement.textContent = ex.nom;
+      descElement.textContent = ex.description;
+      compteurExercice.textContent = `${currentIndex + 1} / ${exercices.length}`;
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === exercices.length - 1;
+
+      if (ex.type === "chrono") {
+        repButtonsDiv.style.display = 'none';
+        timerButtonsDiv.style.display = 'block';
+        resetTimer();
+      } else {
+        timerButtonsDiv.style.display = 'none';
+        repButtonsDiv.style.display = 'block';
+        resetReps();
+      }
+    }
+
+    pauseBtn.addEventListener('click', () => {
+      if (paused && secondsRemaining > 0) {
+        startTimer();
+      } else {
+        pauseTimer();
+      }
+    });
+
+    resetBtn.addEventListener('click', resetTimer);
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; updateExercice(); } });
+    nextBtn.addEventListener('click', () => { if (currentIndex < exercices.length - 1) { currentIndex++; updateExercice(); } });
+    sortieBtn.addEventListener('click', () => { window.location.href = 'abdos.html'; });
+    repMinusBtn.addEventListener('click', () => { if (repCount > 0) { repCount--; updateRepDisplay(); } });
+    repPlusBtn.addEventListener('click', () => { repCount++; updateRepDisplay(); });
+
+    updateExercice();
+  </script>
+</body>
+</html>

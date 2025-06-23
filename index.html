@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MS-Fitness - Accueil</title>
+  <link rel="icon" href="favicon.ico.png" type="image/x-icon" />
+  <style>
+    :root {
+      --primary: #b22222;
+      --primary-dark: #7a0d0d;
+      --bg: #ffffff;
+      --text: #222;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background-color: var(--primary);
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      font-weight: 300;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--primary);
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px var(--shadow);
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      padding: 40px 10px;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 18px rgba(178, 34, 34, 0.3);
+    }
+
+    .card a {
+      display: block;
+      padding: 15px;
+      text-decoration: none;
+      color: var(--primary);
+      font-size: 1.2rem;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .card a:hover {
+      color: var(--primary-dark);
+    }
+
+    footer {
+      background-color: var(--primary);
+      color: white;
+      text-align: left;
+      padding: 20px 30px;
+      margin-top: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    footer p {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    /* Boîte blanche pour le bouton À propos */
+    .apropos-box {
+      background-color: white;
+      border: 2px solid var(--primary);
+      border-radius: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      user-select: none;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px var(--shadow);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      min-width: 100px;
+      text-align: center;
+    }
+
+    .apropos-box:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    /* Styles modale */
+    .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 9999; 
+      left: 0;
+      top: 0;
+      width: 100%; 
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 25px 30px;
+      border-radius: 12px;
+      max-width: 500px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      color: var(--primary);
+      line-height: 1.6;
+      position: relative;
+      text-align: left;
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .modal-content p {
+      font-size: 1rem;
+    }
+
+    .close {
+      color: var(--primary);
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 1.8rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .close:hover {
+      color: var(--primary-dark);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>MS-Fitness</h1>
+    <p>MS-Fitness, faites du sport sans matériel</p>
+  </header>
+
+  <main>
+    <h2>Choisissez une catégorie</h2>
+    <div class="grid">
+      <div class="card">
+        <a href="projet/cardio.html">Cardio</a>
+      </div>
+      <div class="card">
+        <a href="projet/haut-du-corps.html">Haut du corps</a>
+      </div>
+      <div class="card">
+        <a href="projet/bas-du-corps.html">Bas du corps</a>
+      </div>
+      <div class="card">
+        <a href="projet/bras.html">Bras</a>
+      </div>
+      <div class="card">
+        <a href="projet/jambes.html">Jambes</a>
+      </div>
+      <div class="card">
+        <a href="projet/abdos.html">Abdos</a>
+      </div>
+      <div class="card">
+        <a href="projet/full-body.html">Full Body</a>
+      </div>
+      <div class="card">
+        <a href="projet/Etirement.html">Étirements</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 MS-Fitness par MBALA MALAMBU JONATHAN. Tous droits réservés.</p>
+    <div class="apropos-box" id="apropos-btn">À propos</div>
+  </footer>
+
+  <!-- Fenêtre modale -->
+  <div id="apropos-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="close-modal">&times;</span>
+      <h3>À propos de MS-Fitnesse</h3>
+      <p>
+        L'activité physique régulière améliore la santé mentale, réduit les risques de maladies chroniques (diabète, maladies cardiovasculaires, etc.) et renforce la confiance en soi.
+        <br><br>
+        Ce site a été conçu par <strong>MBALA MALAMBU JONATHAN</strong> pour aider chacun à faire du sport à la maison, sans matériel.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById("apropos-modal");
+    const btn = document.getElementById("apropos-btn");
+    const span = document.getElementById("close-modal");
+
+    btn.onclick = () => modal.style.display = "block";
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
+  </script>
+
+</body>
+</html>

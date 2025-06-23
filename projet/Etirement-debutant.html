@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Étirement - Niveau Débutant - MS-Fitness</title>
+  <link rel="icon" href="favicon.ico.png" type="image/x-icon" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #fff;
+      color: #222;
+      margin: 0; padding: 0;
+    }
+    header, footer {
+      background-color: #b22222;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    main {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+    h2 {
+      color: #b22222;
+    }
+    #exercice-nom {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    #exercice-description {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+    #compteur {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #b22222;
+      font-weight: bold;
+      user-select: none;
+    }
+    button {
+      background-color: #b22222;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 12px 25px;
+      font-weight: bold;
+      font-size: 1rem;
+      margin: 5px 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #7a0d0d;
+    }
+    .button-group {
+      margin-bottom: 30px;
+    }
+    .rep-buttons {
+      margin: 15px 0;
+    }
+    .rep-buttons button {
+      width: 50px;
+      padding: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">MS-Fitness</div>
+    <div class="subtitle">Catégorie : Étirement | Niveau : Débutant</div>
+  </header>
+  <main>
+    <h2>Exercice <span id="compteur-exercice">1 / 10</span></h2>
+    <div id="exercice-nom"></div>
+    <div id="exercice-description"></div>
+    <div id="compteur">30 secondes</div>
+    <div class="button-group" id="timer-buttons">
+      <button id="pause-btn">Commencer</button>
+      <button id="reset-btn">Recommencer</button>
+    </div>
+    <div class="button-group">
+      <button id="prev-btn">Précédent</button>
+      <button id="next-btn">Suivant</button>
+    </div>
+    <button id="sortie-btn">Sortie</button>
+  </main>
+  <footer>
+    <p>&copy; 2025 MS-Fitness par MBALA MALAMBU JONATHAN. Tous droits réservés.</p>
+  </footer>
+  <script>
+    const exercices = [
+      { nom: "Étirement cou", description: "Incline lentement la tête de chaque côté, maintiens 15 sec de chaque côté." },
+      { nom: "Étirement épaules", description: "Croise un bras devant toi et maintiens-le avec l’autre bras pendant 30 sec, puis change." },
+      { nom: "Étirement triceps", description: "Plie un bras derrière la tête et pousse doucement avec l’autre main. Change après 30 sec." },
+      { nom: "Étirement pectoraux", description: "Place un bras contre un mur et tourne le corps doucement dans le sens opposé." },
+      { nom: "Étirement dos", description: "Assieds-toi, jambes croisées, penche-toi doucement en avant bras tendus." },
+      { nom: "Étirement lombaires", description: "Allongé sur le dos, ramène doucement les genoux vers la poitrine." },
+      { nom: "Étirement quadriceps", description: "Attrape ta cheville derrière toi et tire doucement pour étirer l’avant de la cuisse." },
+      { nom: "Étirement ischio-jambiers", description: "Assis, jambes tendues, penche-toi doucement vers l’avant." },
+      { nom: "Étirement mollets", description: "Place un pied en avant, plie le genou, l’autre jambe tendue derrière, talon au sol." },
+      { nom: "Étirement fessiers", description: "Allongé sur le dos, croise une jambe sur l’autre et tire doucement vers toi." }
+    ];
+
+    let currentIndex = 0;
+    let secondsRemaining = 30;
+    let timerInterval = null;
+    let paused = true;
+
+    const nomElement = document.getElementById('exercice-nom');
+    const descElement = document.getElementById('exercice-description');
+    const compteurExercice = document.getElementById('compteur-exercice');
+    const compteur = document.getElementById('compteur');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const sortieBtn = document.getElementById('sortie-btn');
+
+    function formatTime(s) {
+      const min = Math.floor(s / 60).toString().padStart(2, '0');
+      const sec = (s % 60).toString().padStart(2, '0');
+      return `${min}:${sec}`;
+    }
+
+    function updateTimerDisplay() {
+      compteur.textContent = formatTime(secondsRemaining);
+    }
+
+    function resetTimer() {
+      secondsRemaining = 30;
+      paused = true;
+      pauseBtn.textContent = 'Commencer';
+      clearInterval(timerInterval);
+      updateTimerDisplay();
+    }
+
+    function startTimer() {
+      if (!paused) return;
+      paused = false;
+      pauseBtn.textContent = 'Pause';
+      timerInterval = setInterval(() => {
+        if (secondsRemaining > 0) {
+          secondsRemaining--;
+          updateTimerDisplay();
+        } else {
+          clearInterval(timerInterval);
+          paused = true;
+          pauseBtn.textContent = 'Commencer';
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      paused = true;
+      pauseBtn.textContent = 'Commencer';
+      clearInterval(timerInterval);
+    }
+
+    function updateExercice() {
+      const ex = exercices[currentIndex];
+      nomElement.textContent = ex.nom;
+      descElement.textContent = ex.description;
+      compteurExercice.textContent = `${currentIndex + 1} / ${exercices.length}`;
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === exercices.length - 1;
+      resetTimer();
+    }
+
+    pauseBtn.addEventListener('click', () => {
+      if (paused && secondsRemaining > 0) {
+        startTimer();
+      } else {
+        pauseTimer();
+      }
+    });
+
+    resetBtn.addEventListener('click', resetTimer);
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; updateExercice(); } });
+    nextBtn.addEventListener('click', () => { if (currentIndex < exercices.length - 1) { currentIndex++; updateExercice(); } });
+    sortieBtn.addEventListener('click', () => { window.location.href = 'Etirement.html'; });
+
+    updateExercice();
+  </script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bras - Niveau Avancé - MS-Fitness</title>
+  <link rel="icon" href="favicon.ico.png" type="image/x-icon" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #fff;
+      color: #222;
+      margin: 0; padding: 0;
+    }
+    header, footer {
+      background-color: #b22222;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .subtitle {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    main {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+    h1, h2 {
+      color: #b22222;
+    }
+    #exercice-nom {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    #exercice-description {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+    #compteur {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #b22222;
+      font-weight: bold;
+      user-select: none;
+    }
+    button {
+      background-color: #b22222;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 12px 25px;
+      font-weight: bold;
+      font-size: 1rem;
+      margin: 5px 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #7a0d0d;
+    }
+    .button-group {
+      margin-bottom: 30px;
+    }
+    .rep-buttons {
+      margin: 15px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+    .rep-buttons button {
+      width: 50px;
+      padding: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">MS-Fitness</div>
+    <div class="subtitle">Catégorie : Bras | Niveau : Avancé</div>
+  </header>
+  <main>
+    <h2>Exercice <span id="compteur-exercice">1 / 10</span></h2>
+    <div id="exercice-nom"></div>
+    <div id="exercice-description"></div>
+    <div id="compteur">20 répétitions</div>
+    <div class="button-group" id="timer-buttons" style="display:none;">
+      <button id="pause-btn">Commencer</button>
+      <button id="reset-btn">Recommencer</button>
+    </div>
+    <div class="rep-buttons" id="rep-buttons">
+      <button id="rep-minus">-</button>
+      <span id="rep-count" style="font-size:2rem;">20</span>
+      <button id="rep-plus">+</button>
+    </div>
+    <div class="button-group">
+      <button id="prev-btn">Précédent</button>
+      <button id="next-btn">Suivant</button>
+    </div>
+    <button id="sortie-btn">Sortie</button>
+  </main>
+  <footer>
+    <p>&copy; 2025 MS-Fitness par MBALA MALAMBU JONATHAN. Tous droits réservés.</p>
+  </footer>
+  <script>
+    const exercices = [
+      { nom: "Pompes déclinées", description: "Place tes pieds sur une surface surélevée, effectue des pompes en gardant le corps droit pour solliciter davantage le haut des pectoraux.", type: "serie" },
+      { nom: "Pompes sur un bras", description: "En appui principalement sur un bras, réalise une pompe tout en maintenant l'équilibre, pour un travail intensif du bras.", type: "serie" },
+      { nom: "Dips lestés", description: "Réalise des dips en ajoutant du poids (ceinture ou sac à dos lesté) pour augmenter la difficulté.", type: "serie" },
+      { nom: "Pompes explosives", description: "Effectue une pompe en poussant fort pour décoller les mains du sol, améliore ta puissance et explosivité.", type: "serie" },
+      { nom: "Tractions australiennes", description: "Sous une barre basse, tire ton corps vers la barre en gardant les pieds au sol, travaille le dos et les bras.", type: "serie" },
+      { nom: "Extensions triceps explosives", description: "En position planche sur les mains, effectue une extension rapide et explosive des triceps.", type: "serie" },
+      { nom: "Planche dynamique bras", description: "En position planche, alterne entre appui sur les avant-bras et les mains, renforce tes bras et ton gainage.", type: "serie" },
+      { nom: "Pompes en équilibre", description: "Effectue des pompes tout en maintenant ton corps en équilibre, sollicite la stabilité et la force des bras.", type: "serie" },
+      { nom: "Pompes pliométriques", description: "Réalise des pompes avec un saut des mains, améliore ta puissance et ton explosivité.", type: "serie" },
+      { nom: "Planche bras levés", description: "En position planche, lève alternativement un bras devant toi, renforce la stabilité et les bras.", type: "serie" }
+    ];
+
+    let currentIndex = 0;
+    let secondsRemaining = 50;
+    let timerInterval = null;
+    let paused = true;
+    let repCount = 20;
+
+    const nomElement = document.getElementById('exercice-nom');
+    const descElement = document.getElementById('exercice-description');
+    const compteurExercice = document.getElementById('compteur-exercice');
+    const compteur = document.getElementById('compteur');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const sortieBtn = document.getElementById('sortie-btn');
+    const timerButtonsDiv = document.getElementById('timer-buttons');
+    const repButtonsDiv = document.getElementById('rep-buttons');
+    const repMinusBtn = document.getElementById('rep-minus');
+    const repPlusBtn = document.getElementById('rep-plus');
+    const repCountSpan = document.getElementById('rep-count');
+
+    function updateRepDisplay() {
+      compteur.textContent = `${repCount} répétitions`;
+      repCountSpan.textContent = repCount;
+    }
+
+    function resetReps() {
+      repCount = 20;
+      updateRepDisplay();
+    }
+
+    function updateExercice() {
+      const ex = exercices[currentIndex];
+      nomElement.textContent = ex.nom;
+      descElement.textContent = ex.description;
+      compteurExercice.textContent = `${currentIndex + 1} / ${exercices.length}`;
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === exercices.length - 1;
+
+      // Ici, tous les exercices sont de type série, donc affichage répétitions
+      timerButtonsDiv.style.display = 'none';
+      repButtonsDiv.style.display = 'flex';
+      resetReps();
+    }
+
+    pauseBtn.addEventListener('click', () => {
+      // Pas utilisé car pas de timer ici
+    });
+
+    resetBtn.addEventListener('click', () => {
+      // Pas utilisé car pas de timer ici
+    });
+
+    repMinusBtn.addEventListener('click', () => {
+      if (repCount > 1) {
+        repCount--;
+        updateRepDisplay();
+      }
+    });
+
+    repPlusBtn.addEventListener('click', () => {
+      if (repCount < 50) {
+        repCount++;
+        updateRepDisplay();
+      }
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateExercice();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < exercices.length - 1) {
+        currentIndex++;
+        updateExercice();
+      }
+    });
+
+    sortieBtn.addEventListener('click', () => {
+      window.location.href = 'bras.html'; // Retour à la page bras principale
+    });
+
+    // Initialisation
+    updateExercice();
+  </script>
+</body>
+</html>
